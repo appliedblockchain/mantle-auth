@@ -2,12 +2,19 @@ const jwt = require('jsonwebtoken')
 const scrypt = require('./scrypt')
 
 /**
- * @param  {string} password
- * @return {string} A hashed version of the password
+ * @param  {string} password Password to be hashed
+ * @param  {object} [options] A set of optional values that can be passed into the hash function
+ * @param  {number} [options.N] CPU/memory cost parameter. Must be a power of two greater than one. Defaults to 16384
+ * @param  {number} [options.keylen] Length of key. Defaults to 32
+ * @param  {number} [options.r] Block size parameter. Defaults to 8
+ * @param  {number} [options.p] Parallelization parameter. Defaults to 1
+ * @param  {number} [options.maxmem] Memory upper bound. Defaults to 32 * 1024 * 1024
+ * @param  {number} [options.salt] Should be as unique as possible. It is recommended that a salt is random and at least 16 bytes long
+ * @return {number} A hashed version of the password
  */
-const hashPassword = async (password) => {
+const hashPassword = async (password, options) => {
   try {
-    return scrypt.hash(password)
+    return scrypt.hash(password, options)
   } catch (err) {
     throw err
   }
