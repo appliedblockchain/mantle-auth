@@ -1,18 +1,13 @@
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
-
-// ============================================================================
-// BCRYPT
-// ============================================================================
+const scrypt = require('./scrypt')
 
 /**
  * @param  {string} password
- * @param  {number} saltRounds
  * @return {string} A hashed version of the password
  */
-const bcryptHash = async (password, saltRounds = 10) => {
+const bcryptHash = async (password) => {
   try {
-    return bcrypt.hash(password, saltRounds)
+    return scrypt.hash(password)
   } catch (err) {
     throw err
   }
@@ -27,7 +22,7 @@ const bcryptHash = async (password, saltRounds = 10) => {
  */
 const bcryptCompare = async (password, hash) => {
   try {
-    return bcrypt.compare(password, hash)
+    return scrypt.compare(password, hash)
   } catch (err) {
     throw err
   }

@@ -1,12 +1,11 @@
 {
   "name": "@appliedblockchain/mantle-auth",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Authorization functionality for Koa routers",
   "scripts": {
     "test": "jest"
   },
   "dependencies": {
-    "bcrypt": "^3.0.2",
     "jsonwebtoken": "^8.3.0",
     "knex": "^0.15.2",
     "koa-joi-router": "^5.1.0",
