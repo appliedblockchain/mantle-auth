@@ -1,5 +1,5 @@
 const { getAdapter } = require('../../storage/adapters')
-const { bcryptCompare, jwtSign } = require('../../auth')
+const { comparePassword, jwtSign } = require('../../auth')
 
 module.exports = ({ jwt = {}, returning }) => {
   if (!(jwt || jwt.secret)) {
@@ -34,7 +34,7 @@ module.exports = ({ jwt = {}, returning }) => {
 
       const [ userMap ] = await adapter.getUser({ email })
 
-      const match = await bcryptCompare(password, userMap.password)
+      const match = await comparePassword(password, userMap.password)
 
       if (!match) {
         ctx.throw(401)

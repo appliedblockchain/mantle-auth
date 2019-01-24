@@ -5,7 +5,7 @@ const scrypt = require('./scrypt')
  * @param  {string} password
  * @return {string} A hashed version of the password
  */
-const bcryptHash = async (password) => {
+const hashPassword = async (password) => {
   try {
     return scrypt.hash(password)
   } catch (err) {
@@ -20,7 +20,7 @@ const bcryptHash = async (password) => {
  * @description Compares a plain text password to a hashed password and returns a boolean
  *    indicating whether the two match
  */
-const bcryptCompare = async (password, hash) => {
+const comparePassword = async (password, hash) => {
   try {
     return scrypt.compare(password, hash)
   } catch (err) {
@@ -46,7 +46,7 @@ const jwtSign = (payload, secret, options) => {
 }
 
 module.exports = {
-  bcryptCompare,
-  bcryptHash,
+  comparePassword,
+  hashPassword,
   jwtSign
 }

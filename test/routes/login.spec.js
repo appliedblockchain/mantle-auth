@@ -2,7 +2,7 @@ const PsqlAdapter = require('storage/adapters/psql')
 const { createKoaApp } = require('../utils.js')
 const { createRoute } = require('routes/login')
 const { setAdapter } = require('storage/adapters')
-const { bcryptHash } = require('../../auth')
+const { hashPassword } = require('../../auth')
 const { personData } = require('../data')
 const http = require('http')
 const request = require('supertest')
@@ -23,7 +23,7 @@ describe(`POST ${endpoint}`, () => {
       }
     })
 
-    const hashedPassword = await bcryptHash(data.password)
+    const hashedPassword = await hashPassword(data.password)
 
     const insertData = {
       ...data,
