@@ -1,7 +1,7 @@
 'use strict'
 const Router = require('koa-joi-router')
 
-const { joiDefinition: joiDefinitionExclude } = require('middleware/authorization/exclude')
+const { joiDefinition: joiDefinitionExclude } = require('../../middleware/authorization/exclude')
 
 describe('koa-joi-router mantle-auth exclude function builder', () => {
   const handler = () => {}
