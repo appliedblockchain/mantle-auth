@@ -1,18 +1,20 @@
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
-
-// ============================================================================
-// BCRYPT
-// ============================================================================
+const scrypt = require('./scrypt')
 
 /**
- * @param  {string} password
- * @param  {number} saltRounds
+ * @param  {string} password Password to be hashed
+ * @param  {object} [options] A set of optional values that can be passed into the hash function
+ * @param  {number} [options.N] CPU/memory cost parameter. Must be a power of two greater than one. Defaults to 16384
+ * @param  {number} [options.keylen] Length of key. Defaults to 32
+ * @param  {number} [options.r] Block size parameter. Defaults to 8
+ * @param  {number} [options.p] Parallelization parameter. Defaults to 1
+ * @param  {number} [options.maxmem] Memory upper bound. Defaults to 32 * 1024 * 1024
+ * @param  {string} [options.salt] Should be as unique as possible. It is recommended that a salt is random and at least 16 bytes long
  * @return {string} A hashed version of the password
  */
-const bcryptHash = async (password, saltRounds = 10) => {
+const hashPassword = async (password, options) => {
   try {
-    return bcrypt.hash(password, saltRounds)
+    return scrypt.hash(password, options)
   } catch (err) {
     throw err
   }
@@ -25,9 +27,9 @@ const bcryptHash = async (password, saltRounds = 10) => {
  * @description Compares a plain text password to a hashed password and returns a boolean
  *    indicating whether the two match
  */
-const bcryptCompare = async (password, hash) => {
+const comparePassword = async (password, hash) => {
   try {
-    return bcrypt.compare(password, hash)
+    return scrypt.compare(password, hash)
   } catch (err) {
     throw err
   }
@@ -51,7 +53,7 @@ const jwtSign = (payload, secret, options) => {
 }
 
 module.exports = {
-  bcryptCompare,
-  bcryptHash,
+  comparePassword,
+  hashPassword,
   jwtSign
 }
