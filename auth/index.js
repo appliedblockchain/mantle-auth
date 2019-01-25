@@ -9,8 +9,8 @@ const scrypt = require('./scrypt')
  * @param  {number} [options.r] Block size parameter. Defaults to 8
  * @param  {number} [options.p] Parallelization parameter. Defaults to 1
  * @param  {number} [options.maxmem] Memory upper bound. Defaults to 32 * 1024 * 1024
- * @param  {number} [options.salt] Should be as unique as possible. It is recommended that a salt is random and at least 16 bytes long
- * @return {number} A hashed version of the password
+ * @param  {string} [options.salt] Should be as unique as possible. It is recommended that a salt is random and at least 16 bytes long
+ * @return {string} A hashed version of the password
  */
 const hashPassword = async (password, options) => {
   try {
