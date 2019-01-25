@@ -1,5 +1,5 @@
-const { middleware: authMiddleware } = require('../../middleware/authorization')
-const { jwt: jwtHandle } = require('../../middleware/authorization/handle')
+const { middleware: authMiddleware } = require('middleware/authorization')
+const { jwt: jwtHandle } = require('middleware/authorization/handle')
 const { createKoaApp } = require('../utils.js')
 const { jwtSign } = require('../../auth')
 const http = require('http')
