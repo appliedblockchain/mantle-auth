@@ -34,6 +34,10 @@ module.exports = ({ jwt = {}, returning }) => {
 
       const [ userMap ] = await adapter.getUser({ email })
 
+      if (!userMap) {
+        ctx.throw(401)
+      }
+
       const match = await comparePassword(password, userMap.password)
 
       if (!match) {
