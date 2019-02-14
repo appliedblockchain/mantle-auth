@@ -3,7 +3,7 @@
 const assert = require('assert')
 const { randomBytes, scrypt, createHash } = require('crypto')
 
-const defaultN = process.env.NODE_ENV === 'test' ? 2 : 16384
+const defaultN = process.env.NODE_ENV === 'test' ? 2 : 131072
 const defaultKeylen = 32
 const defaultR = 8
 const defaultP = 1
