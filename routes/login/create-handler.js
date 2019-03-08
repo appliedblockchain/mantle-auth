@@ -11,15 +11,15 @@ module.exports = ({ jwt = {}, returning }) => {
   const createPerson = (personMap, selector) => {
     let result
 
-    switch (typeof selector) {
-      case 'array':
+    switch (true) {
+      case selector instanceof Array:
         result = {}
         selector.forEach(p => {
           result[p] = personMap[p]
         })
         break
 
-      case 'function':
+      case selector instanceof Function:
         result = selector(personMap)
         break
     }
