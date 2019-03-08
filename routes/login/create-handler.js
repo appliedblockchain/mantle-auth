@@ -32,17 +32,13 @@ module.exports = ({ jwt = {}, returning }) => {
       const adapter = getAdapter()
       const { email, password } = ctx.request.body
 
-      const [ userMap ] = await adapter.getUser({ email })
+      const userMap = await adapter.getUser({ email })
+        .then(async userMap => {
+          const match = await comparePassword(password, userMap.password)
 
-      if (!userMap) {
-        ctx.throw(401)
-      }
-
-      const match = await comparePassword(password, userMap.password)
-
-      if (!match) {
-        ctx.throw(401)
-      }
+          return match ? userMap : Promise.reject()
+        })
+        .catch(() => ctx.throw(401))
 
       const payload = (jwt.payload || defaultPayload)(userMap)
       const token = jwtSign(payload, jwt.secret, jwt.sign || { expiresIn: '1d' })

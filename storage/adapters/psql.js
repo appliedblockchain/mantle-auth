@@ -10,22 +10,42 @@ class PsqlStorageAdapter {
     this.dbNameMap = Object.assign({}, PsqlStorageAdapter.defaultDbNameMap, dbNameMap)
   }
 
-  createUser({ email, password, queryOptions }) {
-    return this.knex(this.dbNameMap.table)
-      .insert({ [this.dbNameMap.email]: email, [this.dbNameMap.password]: password }, queryOptions)
+  async createUser({ email, password, queryOptions = {} }) {
+    const { returning } = queryOptions
+
+    const result = await this.knex(this.dbNameMap.table)
+      .insert({ [this.dbNameMap.email]: email, [this.dbNameMap.password]: password }, returning || [ this.dbNameMap.email ])
+      .then(createdList => createdList.length ? createdList : Promise.reject())
+      .catch(() => {
+        throw new Error(`Failed to create user with email "${email}"`)
+      })
+
+    return (returning && result) || undefined
   }
 
-  getUser({ email }) {
-    const result = this.knex(this.dbNameMap.table)
+  async getUser({ email }) {
+    const result = await this.knex(this.dbNameMap.table)
       .where({ [this.dbNameMap.email]: email })
+      .then(resultList => resultList.length ? resultList[0] : Promise.reject())
+      .catch(() => {
+        throw new Error(`Failed to find user with email "${email}"`)
+      })
 
     return result
   }
 
-  updateUser({ email, password, updateMap, queryOptions }) {
-    return this.knex(this.dbNameMap.table)
+  async updateUser({ email, password, updateMap, queryOptions = {} }) {
+    const { returning } = queryOptions
+
+    const result = await this.knex(this.dbNameMap.table)
       .where({ [this.dbNameMap.email]: email, [this.dbNameMap.password]: password })
-      .update(updateMap, queryOptions)
+      .update(updateMap, returning || [ this.dbNameMap.email ])
+      .then(updatedList => updatedList.length ? updatedList : Promise.reject())
+      .catch(() => {
+        throw new Error(`Failed to update user with email "${email}"`)
+      })
+
+    return (returning && result) || undefined
   }
 }
 
