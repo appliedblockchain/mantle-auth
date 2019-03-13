@@ -25,7 +25,7 @@ const connection = {
 
 let knex
 
-describe.skip('The PSQL storage adapter', base({
+(process.env.NO_PG ? describe.skip : describe)('The PSQL storage adapter', base({
   before: async data => {
     knex = initKnex({
       client: 'pg',
