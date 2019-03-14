@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  tests:
+    working_directory: ~/mantle-auth
+    docker:
+      - image: circleci/node:10.7
+      - image: postgres:10.6
+        environment:
+          POSTGRES_DB: mantle_auth_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+    steps:
+      - checkout
+      - run:
+          name: Authorize NPM
+          command: echo "//registry.npmjs.org/:_authToken=$PRIVATE_NPM_TOKEN" > ~/.npmrc
+      - restore_cache:
+          key: npm-mantle-auth-v1-{{ checksum "package.json" }}
+      - run: npm install --no-save
+      - save_cache:
+          key: npm-mantle-auth-v1-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Init database
+          command: |-
+            node test/init-database.js
+      - run:
+          name: Tests
+          command: |-
+            npm run test:all
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - tests:
+          context: org-global
