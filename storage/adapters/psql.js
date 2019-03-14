@@ -23,6 +23,10 @@ class PsqlStorageAdapter {
     return (returning && result) || undefined
   }
 
+  destroy() {
+    return this.knex.destroy()
+  }
+
   async getUser({ email }) {
     const result = await this.knex(this.dbNameMap.table)
       .where({ [this.dbNameMap.email]: email })

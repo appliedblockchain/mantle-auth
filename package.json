@@ -5,7 +5,7 @@
   "scripts": {
     "test": "NO_PG=1 jest",
     "test:all": "jest",
-    "test:pg": "jest psql --forceExit"
+    "test:pg": "jest psql"
   },
   "dependencies": {
     "jsonwebtoken": "^8.3.0",

@@ -12,7 +12,8 @@ module.exports = ({ after = () => {}, before = () => {}, createAdapter }) => () 
     adapter = createAdapter(data)
   })
 
-  afterEach(() => {
+  afterEach(async () => {
+    await adapter.destroy()
     adapter = null
   })
 

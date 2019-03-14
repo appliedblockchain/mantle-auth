@@ -24,6 +24,10 @@ class MemoryAdapter {
     return email
   }
 
+  destroy() {
+    delete this.userDataMap
+  }
+
   async getUser({ email }) {
     const userData = this.userDataMap[email]
 
