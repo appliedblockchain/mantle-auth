@@ -3,7 +3,9 @@
   "version": "1.1.0",
   "description": "Authorization functionality for Koa routers",
   "scripts": {
-    "test": "jest"
+    "test": "NO_PG=1 jest",
+    "test:all": "jest",
+    "test:pg": "jest psql"
   },
   "dependencies": {
     "jsonwebtoken": "^8.3.0",
@@ -20,6 +22,7 @@
     "koa": "^2.6.2",
     "koa-compress": "^3.0.0",
     "koa-respond": "^2.1.0",
+    "lodash": "^4.17.11",
     "supertest": "^3.3.0"
   },
   "engines": {

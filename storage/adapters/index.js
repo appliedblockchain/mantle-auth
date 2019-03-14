@@ -1,6 +1,7 @@
 /**
  * interface IStorageAdapter {
  *  createUser({ email, password }) {}
+ *  destroy() {}
  *  getUser({ email }) {}
  *  updateUser({ email, password, updateMap }) {}
  * }
