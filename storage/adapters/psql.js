@@ -1,9 +1,16 @@
 const initKnex = require('knex')
 
 class PsqlStorageAdapter {
-  constructor({ client = 'pg', connection, dbNameMap = {} } = {}) {
+  /**
+   * Adapter that interacts with a Postgres database to create/retrieve user information. Will establish a connection with the database using `knex` when initialised.
+   * @param {Object} options
+   * @param {Object|String} options.connection Settings for `knex` to connect to the Postgres database; See the `knex` initialization `connection` property for more info
+   * @param {Object.<String,String>} [dbNameMap] Defines the name of the database table where user credentials are stored as well as the column names that define those credentials. See `PsqlStorageAdapter.defaultDbNameMap` for defaults
+   * @see https://knexjs.org/#Installation-client
+   */
+  constructor({ connection, dbNameMap = {} } = {}) {
     this.knex = initKnex({
-      client,
+      client: 'pg',
       connection
     })
 

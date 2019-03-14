@@ -1,5 +1,9 @@
 class MemoryAdapter {
-  constructor(userDataList) {
+  /**
+   * Adapter that uses a JavaScript Object to store user data. Intended for use mainly to aid testing.
+   * @param {Object} [userDataList] Data to initialize the data store with
+   */
+  constructor(userDataList = {}) {
     this.userDataMap = {}
 
     for (const data of userDataList) {
