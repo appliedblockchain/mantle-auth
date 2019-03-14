@@ -7,7 +7,7 @@ const defaultN = process.env.NODE_ENV === 'test' ? 2 : 131072
 const defaultKeylen = 32
 const defaultR = 8
 const defaultP = 1
-const defaultMaxmem = 32 * 1024 * 1024
+const defaultMaxmem = 256 * 1024 * 1024
 
 assert(128 * defaultN * defaultR < defaultMaxmem, 'Invalid defaults.')
 
