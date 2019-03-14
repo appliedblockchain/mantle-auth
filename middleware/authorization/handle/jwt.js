@@ -5,12 +5,17 @@ const jwt = require('jsonwebtoken')
  * @function jwt
  * @param {String} secret The secret that was used to create jwt tokens that we wish to verify
  * @param {Object} [options] Options to use when verifying a jwt; See the jsonwebtoken `verify` method
+ * @param {Object} [options.algorithms=['HS256']] Allowed jwt verification algorithms
  * @returns {Function}
  * @see https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback
  */
 module.exports = (secret, options = {}) => {
   if (!secret) {
     throw new Error('Cannot initialize JWT auth middleware handler without providing a secret')
+  }
+
+  if (!Array.isArray(options.algorithms) || !options.algorithms.length) {
+    options.algorithms = [ 'HS256' ]
   }
 
   /**
