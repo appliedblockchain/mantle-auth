@@ -22,13 +22,14 @@ jobs:
           paths:
             - node_modules
       - run:
+          name: lint
+          command: npm run lint
+      - run:
           name: Init database
-          command: |-
-            node test/init-database.js
+          command: npm run init-test-database:ci
       - run:
           name: Tests
-          command: |-
-            npm run test:all
+          command: npm run test:all
 
 workflows:
   version: 2

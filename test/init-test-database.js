@@ -1,6 +1,6 @@
 const knex = require('knex')({
   client: 'pg',
-  connection: 'postgres://postgres:password@localhost:5432/mantle_auth_test'
+  connection: process.env.DB_PASSWORD ? 'postgres://postgres:password@localhost:5432/mantle_auth_test' : 'postgres://postgres@localhost:5432/mantle_auth_test'
 })
 
 const initDb = async () => {
