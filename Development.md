@@ -13,17 +13,17 @@ Tests are written for [Jest]. They can be run with the following commands:
 
 - `npm test` runs all tests *except* for the PSQL adapter test
 - `npm run test:all` runs all tests
-- `npm run test:pg` runs the PSQL adapter test
+- `npm run test:pg` only runs the PSQL adapter test
 
-The PSQL adapter test requires a PSQL server that it can connect to in order to run. Such a server can be start with the following [Docker] cli command:
+The PSQL adapter test requires a PSQL server  with a database named "mantle_auth_test" that it can connect to in order to run. Such a server can be start with the following command:
 ```sh
-docker run --rm -p 5432:5432 --name pg postgres:10.6
+npm run test-database
 ```
+It will start an instance using docker
 
-The PSQL adapter test also requires a database with a 'person' table to exist on the server. If the server is running then the database and table can be created with the following [Docker] cli commands:
+The PSQL adapter test also requires a table "person" to exist on the server. If the server is running then the table can be created with the following commands:
 ```sh
-docker exec -u postgres pg psql -c 'CREATE DATABASE mantle_auth_test;'
-docker exec -u postgres pg psql -d mantle_auth_test -c 'CREATE TABLE "person" ("name" VARCHAR, "email" VARCHAR NOT NULL PRIMARY KEY, "password" VARCHAR);'
+npm run init-test-database
 ```
 
 
