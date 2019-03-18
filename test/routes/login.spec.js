@@ -3,7 +3,6 @@ const request = require('supertest')
 const Router = require('koa-joi-router')
 
 const MemoryAdapter = require('storage/adapters/memory')
-const { hashPassword } = require('../../auth')
 const { createKoaApp } = require('../utils.js')
 const { createRoute } = require('routes/login')
 const { personData: data } = require('../data')
@@ -20,7 +19,7 @@ function doValidLogin(server) {
 
 describe('The login functionality', () => {
   beforeAll(async () => {
-    const adapter = new MemoryAdapter([ Object.assign({}, data, { password: await hashPassword(data.password) }) ])
+    const adapter = new MemoryAdapter([ data ])
 
     setAdapter(adapter)
   })
@@ -30,7 +29,11 @@ describe('The login functionality', () => {
 
     beforeAll(async () => {
       const router = new Router()
-      router.route(createRoute({ jwt: { secret: jwtSecret } }))
+      router.route(createRoute({
+        jwt: { secret: jwtSecret },
+        lockAfter: 3,
+        comparePasswordFunc: p => p
+      }))
 
       server = (await createKoaApp())
         .use(router.middleware())
@@ -82,7 +85,8 @@ describe('The login functionality', () => {
         returning: data => {
           passedData = data
           return fakeData
-        }
+        },
+        comparePasswordFunc: p => p
       }))
 
       const server = (await createKoaApp())
@@ -103,7 +107,8 @@ describe('The login functionality', () => {
       const router = new Router()
       router.route(createRoute({
         jwt: { secret: jwtSecret },
-        returning: [ 'email', 'name', 'fakeKey' ]
+        returning: [ 'email', 'name', 'fakeKey' ],
+        comparePasswordFunc: p => p
       }))
 
       const server = (await createKoaApp())
