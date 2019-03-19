@@ -9,12 +9,12 @@ const { comparePassword, jwtSign } = require('../../auth')
  * @param {Object} options.jwt.secret The secret to use for the jwt
  * @param {Function} [options.jwt.payload] A Function that can generate the jwt payload from user details; The default is `{ email, id }`
  * @param {Object} [options.jwt.sign={ expiresIn: '1d' }] Options for signing jwt
- * @param {?number} options.lockAfter The number of login attempts a user can fail, after which the account is locked
+ * @param {?number} options.lockAfter The number of login attempts a user can fail, after which the account is locked. The default is null whereby accounts will never be blocked
  * @param {Array.<String>|Function} [options.returning]
  * @returns {Function} A Function that can be used as Koa middleware to provide a login route
  * @see file://../../auth/index.js jwtSign method
  */
-module.exports = ({ jwt = {}, lockAfter, comparePasswordFunc = comparePassword, returning }) => {
+module.exports = ({ jwt = {}, lockAfter = null, comparePasswordFunc = comparePassword, returning }) => {
   if (!(jwt || jwt.secret)) {
     throw new Error('jwt.secret is required')
   }
