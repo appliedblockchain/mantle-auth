@@ -68,21 +68,21 @@ module.exports = ({ jwt = {}, lockAfter, comparePasswordFunc = comparePassword, 
           if (lockAfter !== null) {
             if (userMap.login_attempts >= lockAfter) {
               const updateMap = { login_attempts: userMap.login_attempts + 1 }
-              await adapter.updateUser({ email, password, updateMap })
+              await adapter.updateUser({ email, password: userMap.password, updateMap })
 
-              return ctx.throw(403)
+              return Promise.reject()
             }
 
             if (match) {
               const updateMap = { login_attempts: 0 }
-              await adapter.updateUser({ email, password, updateMap })
+              await adapter.updateUser({ email, password: userMap.password, updateMap })
 
               return userMap
             } else {
               const incrementLoginAttempt = userMap.login_attempts + 1
               const locked = incrementLoginAttempt >= lockAfter
               const updateMap = { login_attempts: incrementLoginAttempt, locked }
-              await adapter.updateUser({ email, password, updateMap })
+              await adapter.updateUser({ email, password: userMap.password, updateMap })
 
               return Promise.reject()
             }
