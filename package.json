@@ -3,9 +3,14 @@
   "version": "1.1.0",
   "description": "Authorization functionality for Koa routers",
   "scripts": {
+    "lint": "eslint .",
     "test": "NO_PG=1 jest",
     "test:all": "jest",
-    "test:pg": "jest psql"
+    "test:ci": "DB_PASSWORD=password jest --ci --forceExit",
+    "test:pg": "jest psql",
+    "test-database": "docker run --rm -p 5432:5432 -e POSTGRES_DB=mantle_auth_test postgres:10.6",
+    "init-test-database": "node test/init-test-database.js",
+    "init-test-database:ci": "DB_PASSWORD=password node test/init-test-database.js"
   },
   "dependencies": {
     "jsonwebtoken": "^8.3.0",
@@ -14,7 +19,7 @@
     "pg": "^7.6.1"
   },
   "devDependencies": {
-    "@appliedblockchain/eslint-config": "^2.3.0",
+    "@appliedblockchain/eslint-config": "2.3.0",
     "@koa/cors": "^2.2.2",
     "axios": "^0.18.0",
     "eslint": "^5.6.0",

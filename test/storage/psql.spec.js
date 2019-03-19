@@ -19,8 +19,12 @@ const base = require('./base')
 
 const connection = {
   host: 'localhost',
-  user: 'postgres',
+  user: process.env.DB_USER || 'postgres',
   database: 'mantle_auth_test'
+}
+
+if (process.env.DB_PASSWORD) {
+  connection.password = process.env.DB_PASSWORD
 }
 
 let knex
