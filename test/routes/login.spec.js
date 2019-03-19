@@ -22,7 +22,7 @@ describe('The login functionality', () => {
     let server
 
     beforeEach(async () => {
-      const adapter = new MemoryAdapter([ { ...data } ])
+      const adapter = new MemoryAdapter({ userDataList: [ { ...data } ] })
       setAdapter(adapter)
 
       const router = new Router()
@@ -93,7 +93,7 @@ describe('The login functionality', () => {
       })
 
       it('200, successful login', async () => {
-        const adapter = new MemoryAdapter([ { ...data, login_attempts: 2 } ])
+        const adapter = new MemoryAdapter({ userDataList: [ { ...data, login_attempts: 2 } ] })
         setAdapter(adapter)
 
         await doValidLogin(server)
@@ -104,7 +104,7 @@ describe('The login functionality', () => {
         const initialLoginAttempts = 2
         const email = data.email
 
-        const adapter = new MemoryAdapter([ { ...data, login_attempts: initialLoginAttempts } ])
+        const adapter = new MemoryAdapter({ userDataList: [ { ...data, login_attempts: initialLoginAttempts } ] })
         setAdapter(adapter)
 
         await request(server)
@@ -122,7 +122,7 @@ describe('The login functionality', () => {
         const initialLoginAttempts = 3
         const email = data.email
 
-        const adapter = new MemoryAdapter([ { ...data, login_attempts: initialLoginAttempts, locked: true } ])
+        const adapter = new MemoryAdapter({ userDataList: [ { ...data, login_attempts: initialLoginAttempts, locked: true } ] })
         setAdapter(adapter)
 
         await request(server)
@@ -140,7 +140,7 @@ describe('The login functionality', () => {
       let server
 
       beforeAll(async () => {
-        const adapter = new MemoryAdapter([ { ...data } ])
+        const adapter = new MemoryAdapter({ userDataList: [ { ...data } ] })
         setAdapter(adapter)
 
         const router = new Router()
@@ -178,7 +178,7 @@ describe('The login functionality', () => {
       let passedData
       const fakeData = { doge: 'coin', best: 'c01n' }
 
-      const adapter = new MemoryAdapter([ { ...data } ])
+      const adapter = new MemoryAdapter({ userDataList: [ { ...data } ] })
       setAdapter(adapter)
 
       const router = new Router()

@@ -59,6 +59,8 @@ module.exports = ({ jwt = {}, lockAfter = null, comparePasswordFunc = comparePas
   return async ctx => {
     try {
       const adapter = getAdapter()
+      const dbLoginAttempts = adapter.dbNameMap.loginAttempts
+      const dbPassword = adapter.dbNameMap.password
       const { email, password } = ctx.request.body
 
       const userMap = await adapter.getUser({ email })
@@ -67,22 +69,22 @@ module.exports = ({ jwt = {}, lockAfter = null, comparePasswordFunc = comparePas
 
           if (lockAfter !== null) {
             if (userMap.login_attempts >= lockAfter) {
-              const updateMap = { login_attempts: userMap.login_attempts + 1 }
-              await adapter.updateUser({ email, password: userMap.password, updateMap })
+              const updateMap = { login_attempts: userMap[dbLoginAttempts] + 1 }
+              await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
 
               return Promise.reject()
             }
 
             if (match) {
               const updateMap = { login_attempts: 0 }
-              await adapter.updateUser({ email, password: userMap.password, updateMap })
+              await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
 
               return userMap
             } else {
-              const incrementLoginAttempt = userMap.login_attempts + 1
+              const incrementLoginAttempt = userMap[dbLoginAttempts] + 1
               const locked = incrementLoginAttempt >= lockAfter
               const updateMap = { login_attempts: incrementLoginAttempt, locked }
-              await adapter.updateUser({ email, password: userMap.password, updateMap })
+              await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
 
               return Promise.reject()
             }
