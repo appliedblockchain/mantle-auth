@@ -23,7 +23,7 @@ docker run --rm -p 5432:5432 --name pg postgres:10.6
 The PSQL adapter test also requires a database with a 'person' table to exist on the server. If the server is running then the database and table can be created with the following [Docker] cli commands:
 ```sh
 docker exec -u postgres pg psql -c 'CREATE DATABASE mantle_auth_test;'
-docker exec -u postgres pg psql -d mantle_auth_test -c 'CREATE TABLE "person" ("name" VARCHAR, "email" VARCHAR NOT NULL PRIMARY KEY, "password" VARCHAR, "login_attempts" INTEGER);'
+docker exec -u postgres pg psql -d mantle_auth_test -c 'CREATE TABLE "person" ("name" VARCHAR, "email" VARCHAR NOT NULL PRIMARY KEY, "password" VARCHAR, "login_attempts" INTEGER DEFAULT 0);'
 ```
 
 
