@@ -8,7 +8,7 @@ class MemoryAdapter {
     this.dbNameMap = { ...MemoryAdapter.defaultDbNameMap, dbNameMap }
 
     for (const data of userDataList) {
-      this.userDataMap[data.email] = data
+      this.userDataMap[data[this.dbNameMap.email]] = data
     }
   }
 
@@ -58,7 +58,7 @@ class MemoryAdapter {
       userData[k] = updateMap[k]
     }
 
-    return userData.email
+    return userData[this.dbNameMap.email]
   }
 
   _createUserData({ email, password }) {
