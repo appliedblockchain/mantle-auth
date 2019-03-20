@@ -14,7 +14,7 @@ const { comparePassword, jwtSign } = require('../../auth')
  * @returns {Function} A Function that can be used as Koa middleware to provide a login route
  * @see file://../../auth/index.js jwtSign method
  */
-module.exports = ({ jwt = {}, lockAfter = null, comparePasswordFunc = comparePassword, returning }) => {
+module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
   if (!(jwt || jwt.secret)) {
     throw new Error('jwt.secret is required')
   }
@@ -65,7 +65,7 @@ module.exports = ({ jwt = {}, lockAfter = null, comparePasswordFunc = comparePas
 
       const userMap = await adapter.getUser({ email })
         .then(async userMap => {
-          const match = await comparePasswordFunc(password, userMap.password)
+          const match = await comparePassword(password, userMap.password)
 
           if (lockAfter !== null) {
             if (userMap.login_attempts >= lockAfter) {

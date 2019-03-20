@@ -5,6 +5,7 @@ const Router = require('koa-joi-router')
 const MemoryAdapter = require('storage/adapters/memory')
 const { createKoaApp } = require('../utils.js')
 const { createRoute } = require('routes/login')
+const { hashPassword } = require('../../auth')
 const { personData: data } = require('../data')
 const { setAdapter } = require('storage/adapters')
 
@@ -18,23 +19,31 @@ function doValidLogin(server) {
 }
 
 describe('The login functionality', () => {
+  let memoryData
+
+  beforeAll(async () => {
+    const password = await hashPassword(data.password)
+    memoryData = { ...data, ...{ password } }
+  })
+
   describe('The login validation', () => {
     let server
 
-    beforeEach(async () => {
-      const adapter = new MemoryAdapter({ userDataList: [ { ...data } ] })
-      setAdapter(adapter)
-
+    beforeAll(async () => {
       const router = new Router()
       router.route(createRoute({
         jwt: { secret: jwtSecret },
-        lockAfter: 3,
-        comparePasswordFunc: (p, hp) => p === hp
+        lockAfter: 3
       }))
 
       server = (await createKoaApp())
         .use(router.middleware())
         .listen()
+    })
+
+    beforeEach(() => {
+      const adapter = new MemoryAdapter({ userDataList: [ { ...memoryData } ] })
+      setAdapter(adapter)
     })
 
     afterAll(async () => {
@@ -79,8 +88,7 @@ describe('The login functionality', () => {
         const router = new Router()
         router.route(createRoute({
           jwt: { secret: jwtSecret },
-          lockAfter: 3,
-          comparePasswordFunc: (p, hp) => p === hp
+          lockAfter: 3
         }))
 
         server = (await createKoaApp())
@@ -93,7 +101,7 @@ describe('The login functionality', () => {
       })
 
       it('200, successful login', async () => {
-        const adapter = new MemoryAdapter({ userDataList: [ { ...data, login_attempts: 2 } ] })
+        const adapter = new MemoryAdapter({ userDataList: [ { ...memoryData, login_attempts: 2 } ] })
         setAdapter(adapter)
 
         await doValidLogin(server)
@@ -104,7 +112,7 @@ describe('The login functionality', () => {
         const initialLoginAttempts = 2
         const email = data.email
 
-        const adapter = new MemoryAdapter({ userDataList: [ { ...data, login_attempts: initialLoginAttempts } ] })
+        const adapter = new MemoryAdapter({ userDataList: [ { ...memoryData, login_attempts: initialLoginAttempts } ] })
         setAdapter(adapter)
 
         await request(server)
@@ -122,7 +130,7 @@ describe('The login functionality', () => {
         const initialLoginAttempts = 3
         const email = data.email
 
-        const adapter = new MemoryAdapter({ userDataList: [ { ...data, login_attempts: initialLoginAttempts, locked: true } ] })
+        const adapter = new MemoryAdapter({ userDataList: [ { ...memoryData, login_attempts: initialLoginAttempts, locked: true } ] })
         setAdapter(adapter)
 
         await request(server)
@@ -140,14 +148,13 @@ describe('The login functionality', () => {
       let server
 
       beforeAll(async () => {
-        const adapter = new MemoryAdapter({ userDataList: [ { ...data } ] })
+        const adapter = new MemoryAdapter({ userDataList: [ { ...memoryData } ] })
         setAdapter(adapter)
 
         const router = new Router()
         router.route(createRoute({
           jwt: { secret: jwtSecret },
-          lockAfter: null,
-          comparePasswordFunc: (p, hp) => p === hp
+          lockAfter: null
         }))
 
         server = (await createKoaApp())
@@ -178,7 +185,7 @@ describe('The login functionality', () => {
       let passedData
       const fakeData = { doge: 'coin', best: 'c01n' }
 
-      const adapter = new MemoryAdapter({ userDataList: [ { ...data } ] })
+      const adapter = new MemoryAdapter({ userDataList: [ { ...memoryData } ] })
       setAdapter(adapter)
 
       const router = new Router()
@@ -187,8 +194,7 @@ describe('The login functionality', () => {
         returning: data => {
           passedData = data
           return fakeData
-        },
-        comparePasswordFunc: (p, hp) => p === hp
+        }
       }))
 
       const server = (await createKoaApp())
@@ -209,8 +215,7 @@ describe('The login functionality', () => {
       const router = new Router()
       router.route(createRoute({
         jwt: { secret: jwtSecret },
-        returning: [ 'email', 'name', 'fakeKey' ],
-        comparePasswordFunc: (p, hp) => p === hp
+        returning: [ 'email', 'name', 'fakeKey' ]
       }))
 
       const server = (await createKoaApp())
