@@ -3,11 +3,12 @@ class MemoryAdapter {
    * Adapter that uses a JavaScript Object to store user data. Intended for use mainly to aid testing.
    * @param {Object} [userDataList] Data to initialize the data store with
    */
-  constructor(userDataList = {}) {
+  constructor({ userDataList = [], dbNameMap = {} } = {}) {
     this.userDataMap = {}
+    this.dbNameMap = { ...MemoryAdapter.defaultDbNameMap, dbNameMap }
 
     for (const data of userDataList) {
-      this.userDataMap[data.email] = data
+      this.userDataMap[data[this.dbNameMap.email]] = data
     }
   }
 
@@ -57,12 +58,21 @@ class MemoryAdapter {
       userData[k] = updateMap[k]
     }
 
-    return userData.email
+    return userData[this.dbNameMap.email]
   }
 
   _createUserData({ email, password }) {
     return { email, password }
   }
+}
+
+MemoryAdapter.defaultDbNameMap = {
+  table: 'person',
+  email: 'email',
+  password: 'password',
+  locked: 'locked',
+  loginAttempts: 'login_attempts',
+  disableAt: 'disableAt'
 }
 
 module.exports = MemoryAdapter

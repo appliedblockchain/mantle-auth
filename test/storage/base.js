@@ -1,6 +1,6 @@
 const data = [
-  { email: 'alice@example.com', name: 'Alison', password: 'abc' },
-  { email: 'bob@example.com', name: 'Bobby', password: '123' }
+  { email: 'alice@example.com', name: 'Alison', password: 'abc', login_attempts: 0 },
+  { email: 'bob@example.com', name: 'Bobby', password: '123', login_attempts: 0 }
 ]
 
 module.exports = ({ after = () => {}, before = () => {}, createAdapter }) => () => {

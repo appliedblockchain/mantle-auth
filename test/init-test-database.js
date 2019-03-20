@@ -5,7 +5,7 @@ const knex = require('knex')({
 
 const initDb = async () => {
   try {
-    await knex.raw('drop table if exists "person";CREATE TABLE "person" ("name" VARCHAR, "email" VARCHAR NOT NULL PRIMARY KEY, "password" VARCHAR);')
+    await knex.raw('drop table if exists "person";CREATE TABLE "person" ("name" VARCHAR, "email" VARCHAR NOT NULL PRIMARY KEY, "password" VARCHAR, "login_attempts" INTEGER DEFAULT 0);')
     await knex.destroy()
   } catch (err) {
     console.error(err)

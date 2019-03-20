@@ -65,6 +65,7 @@ PsqlStorageAdapter.defaultDbNameMap = {
   email: 'email',
   password: 'password',
   locked: 'locked',
+  loginAttempts: 'login_attempts',
   disableAt: 'disableAt'
 }
 
