@@ -65,16 +65,13 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
 
       const userMap = await adapter.getUser({ email })
         .then(async userMap => {
+          if (userMap.locked) {
+            return ctx.throw(401, 'Account locked, please contact support', { isMantleAuth: true, name: 'LoginError' })
+          }
+
           const match = await comparePassword(password, userMap.password)
 
           if (lockAfter !== null) {
-            if (userMap.login_attempts >= lockAfter) {
-              const updateMap = { login_attempts: userMap[dbLoginAttempts] + 1 }
-              await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
-
-              return Promise.reject()
-            }
-
             if (match) {
               const updateMap = { login_attempts: 0 }
               await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
@@ -86,13 +83,15 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
               const updateMap = { login_attempts: incrementLoginAttempt, locked }
               await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
 
-              return Promise.reject()
+              return ctx.throw(401, 'Password incorrect', { isMantleAuth: true, name: 'LoginError' })
             }
           } else {
-            return match ? userMap : Promise.reject()
+            return match ? userMap : ctx.throw(401, 'Account locked, please contact support', { isMantleAuth: true, name: 'LoginError' })
           }
         })
-        .catch(() => ctx.throw(401))
+        .catch((err) => {
+          throw err
+        })
 
       const payload = (jwt.payload || defaultPayload)(userMap)
       const token = jwtSign(payload, jwt.secret, jwt.sign || { expiresIn: '1d' })
