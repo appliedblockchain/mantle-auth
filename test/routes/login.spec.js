@@ -58,11 +58,11 @@ describe('The login functionality', () => {
       expect(typeof body.token === 'string').toEqual(true)
     })
 
-    it('Returns a 401 error code when sending an invalid user', async () => {
+    it('Returns a 500 error code when sending an invalid user', async () => {
       await request(server)
         .post(endpoint)
         .send({ email: 'who@noone.com', password: data.password })
-        .expect(401)
+        .expect(500)
     })
 
     it('Returns a 400 error code when sending unexpected POST data', async () => {
@@ -126,7 +126,7 @@ describe('The login functionality', () => {
           })
       })
 
-      it('401, on an unsuccessful login when login_attempts === lockAfter', async () => {
+      it('401, on an unsuccessful login when locked === true', async () => {
         const initialLoginAttempts = 3
         const email = data.email
 
@@ -139,7 +139,7 @@ describe('The login functionality', () => {
           .expect(401)
           .then(async () => {
             const user = await adapter.getUser({ email })
-            expect(user.login_attempts).toBe(initialLoginAttempts + 1)
+            expect(user.login_attempts).toBe(initialLoginAttempts)
           })
       })
     })

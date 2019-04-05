@@ -1,5 +1,6 @@
 const { getAdapter } = require('../../storage/adapters')
 const { comparePassword, jwtSign } = require('../../auth')
+const { accountLocked, passwordInvalid } = require('../../constants/errors')
 
 /**
  * Creates a new login route handler; See docstring where the return value is defined for info on its behaviour
@@ -66,7 +67,7 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
       const userMap = await adapter.getUser({ email })
         .then(async userMap => {
           if (userMap.locked) {
-            return ctx.throw(401, 'Account locked, please contact support', { isMantleAuth: true, name: 'LoginError' })
+            return ctx.throw(401, accountLocked)
           }
 
           const match = await comparePassword(password, userMap.password)
@@ -83,10 +84,10 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
               const updateMap = { login_attempts: incrementLoginAttempt, locked }
               await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
 
-              return ctx.throw(401, 'Password incorrect', { isMantleAuth: true, name: 'LoginError' })
+              return ctx.throw(401, passwordInvalid)
             }
           } else {
-            return match ? userMap : ctx.throw(401, 'Account locked, please contact support', { isMantleAuth: true, name: 'LoginError' })
+            return match ? userMap : ctx.throw(401, passwordInvalid)
           }
         })
         .catch((err) => {
