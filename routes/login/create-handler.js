@@ -1,6 +1,7 @@
 const { getAdapter } = require('../../storage/adapters')
 const { comparePassword, jwtSign } = require('../../auth')
-const { accountLocked, passwordInvalid } = require('../../constants/errors')
+const MantleAuthError = require('../../errors/base')
+const { ACCOUNT_LOCKED, INVALID_PASSWORD, INVALID_USER } = MantleAuthError.ERRORS
 
 /**
  * Creates a new login route handler; See docstring where the return value is defined for info on its behaviour
@@ -58,54 +59,52 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
    * @throws {Error}
    */
   return async ctx => {
-    try {
-      const adapter = getAdapter()
-      const dbLoginAttempts = adapter.dbNameMap.loginAttempts
-      const dbPassword = adapter.dbNameMap.password
-      const { email, password } = ctx.request.body
+    const adapter = getAdapter()
+    const dbLoginAttempts = adapter.dbNameMap.loginAttempts
+    const dbPassword = adapter.dbNameMap.password
+    const { email, password } = ctx.request.body
 
-      const userMap = await adapter.getUser({ email })
-        .then(async userMap => {
-          if (userMap.locked) {
-            return ctx.throw(401, accountLocked)
-          }
+    const userMap = await adapter.getUser({ email })
+      .catch(() => {
+        throw new MantleAuthError({ message: 'Unauthorized', name: INVALID_USER, status: 401 })
+      })
+      .then(async userMap => {
+        if (userMap.locked) {
+          throw new MantleAuthError({ message: 'This account has been locked', name: ACCOUNT_LOCKED, status: 401 })
+        }
 
-          const match = await comparePassword(password, userMap.password)
+        const match = await comparePassword(password, userMap.password)
 
-          if (lockAfter !== null) {
-            if (match) {
-              const updateMap = { login_attempts: 0 }
-              await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
+        if (lockAfter !== null) {
+          if (match) {
+            const updateMap = { login_attempts: 0 }
+            await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
 
-              return userMap
-            } else {
-              const incrementLoginAttempt = userMap[dbLoginAttempts] + 1
-              const locked = incrementLoginAttempt >= lockAfter
-              const updateMap = { login_attempts: incrementLoginAttempt, locked }
-              await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
-
-              return ctx.throw(401, passwordInvalid)
-            }
+            return userMap
           } else {
-            return match ? userMap : ctx.throw(401, passwordInvalid)
+            const incrementLoginAttempt = userMap[dbLoginAttempts] + 1
+            const locked = incrementLoginAttempt >= lockAfter
+            const updateMap = { login_attempts: incrementLoginAttempt, locked }
+            await adapter.updateUser({ email, password: userMap[dbPassword], updateMap })
+
+            throw new MantleAuthError({ message: 'Unauthorized', status: 401, name: INVALID_PASSWORD })
           }
-        })
-        .catch((err) => {
-          throw err
-        })
+        } else if (match) {
+          return userMap
+        } else {
+          throw new MantleAuthError({ message: 'Unauthorized', status: 401, name: INVALID_PASSWORD })
+        }
+      })
 
-      const payload = (jwt.payload || defaultPayload)(userMap)
-      const token = jwtSign(payload, jwt.secret, jwt.sign || { expiresIn: '1d' })
+    const payload = (jwt.payload || defaultPayload)(userMap)
+    const token = jwtSign(payload, jwt.secret, jwt.sign || { expiresIn: '1d' })
 
-      const response = { token }
+    const response = { token }
 
-      if (returning) {
-        response.user = createPerson(userMap, returning)
-      }
-
-      ctx.ok(response)
-    } catch (err) {
-      throw err
+    if (returning) {
+      response.user = createPerson(userMap, returning)
     }
+
+    ctx.body = response
   }
 }
