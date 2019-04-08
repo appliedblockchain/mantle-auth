@@ -126,7 +126,7 @@ describe('The login functionality', () => {
           })
       })
 
-      it('401, on an unsuccessful login when login_attempts === lockAfter', async () => {
+      it('401, on an unsuccessful login when locked === true', async () => {
         const initialLoginAttempts = 3
         const email = data.email
 
@@ -139,7 +139,7 @@ describe('The login functionality', () => {
           .expect(401)
           .then(async () => {
             const user = await adapter.getUser({ email })
-            expect(user.login_attempts).toBe(initialLoginAttempts + 1)
+            expect(user.login_attempts).toBe(initialLoginAttempts)
           })
       })
     })
