@@ -58,11 +58,11 @@ describe('The login functionality', () => {
       expect(typeof body.token === 'string').toEqual(true)
     })
 
-    it('Returns a 500 error code when sending an invalid user', async () => {
+    it('Returns a 401 error code when sending an invalid user', async () => {
       await request(server)
         .post(endpoint)
         .send({ email: 'who@noone.com', password: data.password })
-        .expect(500)
+        .expect(401)
     })
 
     it('Returns a 400 error code when sending unexpected POST data', async () => {
