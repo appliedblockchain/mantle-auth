@@ -11,7 +11,7 @@ module.exports = ({ exclude = (() => false), handle }) => {
     const isAuthenticated = await handle(ctx)
 
     if (!isExcluded && !isAuthenticated) {
-        ctx.throw(401)
+      ctx.throw(401)
     }
 
     return next()
