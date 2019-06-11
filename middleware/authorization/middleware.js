@@ -8,13 +8,10 @@
 module.exports = ({ exclude = (() => false), handle }) => {
   return async (ctx, next) => {
     const isExcluded = await exclude(ctx)
+    const isAuthenticated = await handle(ctx)
 
-    if (!isExcluded) {
-      const isAuthenticated = await handle(ctx)
-
-      if (!isAuthenticated) {
+    if (!isExcluded && !isAuthenticated) {
         ctx.throw(401)
-      }
     }
 
     return next()
