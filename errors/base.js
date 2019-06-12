@@ -18,6 +18,7 @@ class MantleAuthError extends Error {
 }
 
 MantleAuthError.ERRORS = {
+  LOGIN_REQUIRED: 'LoginRequired',
   ACCOUNT_LOCKED: 'AccountLocked',
   INVALID_USER: 'InvalidUser',
   INVALID_PASSWORD: 'InvalidPassword'

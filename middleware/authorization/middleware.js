@@ -1,3 +1,6 @@
+const MantleAuthError = require('../../errors/base')
+const { LOGIN_REQUIRED } = MantleAuthError.ERRORS
+
 /**
  * @description Authorization middleware that can be attached to an instance of Koa in order to control the access of requests to its routes
  * @param {Object} options
@@ -11,7 +14,7 @@ module.exports = ({ exclude = (() => false), handle }) => {
     const isAuthenticated = await handle(ctx)
 
     if (!isExcluded && !isAuthenticated) {
-      ctx.throw(401)
+      throw new MantleAuthError({ message: 'Unauthorized', name: LOGIN_REQUIRED, status: 401 })
     }
 
     return next()
