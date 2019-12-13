@@ -69,11 +69,16 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
         throw new MantleAuthError({ message: 'Unauthorized', name: INVALID_USER, status: 401 })
       })
       .then(async userMap => {
-        if (userMap.locked) {
-          throw new MantleAuthError({ message: 'This account has been locked', name: ACCOUNT_LOCKED, status: 401 })
-        }
-
         const match = await comparePassword(password, userMap.password)
+
+        if (userMap.locked) {
+          throw new MantleAuthError({
+            message: 'This account has been locked',
+            name: ACCOUNT_LOCKED,
+            status: 401,
+            isLoginValid: match
+          })
+        }
 
         if (lockAfter !== null) {
           if (match) {

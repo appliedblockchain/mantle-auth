@@ -5,7 +5,8 @@ class MantleAuthError extends Error {
     lineNumber,
     name,
     expose = true,
-    status = 500
+    status = 500,
+    isLoginValid = false
   }) {
     super(message, fileName, lineNumber)
 
@@ -14,6 +15,7 @@ class MantleAuthError extends Error {
     this.status = status
 
     this.isMantleAuth = true
+    this.isLoginValid = isLoginValid
   }
 }
 

@@ -142,6 +142,23 @@ describe('The login functionality', () => {
             expect(user.login_attempts).toBe(initialLoginAttempts)
           })
       })
+
+      it('401, on an successful login when locked === true', async () => {
+        const initialLoginAttempts = 3
+        const email = data.email
+
+        const adapter = new MemoryAdapter({ userDataList: [ { ...memoryData, login_attempts: initialLoginAttempts, locked: true } ] })
+        setAdapter(adapter)
+
+        await request(server)
+          .post(endpoint)
+          .send({ email, password: 'password123' })
+          .expect(401)
+          .then(async () => {
+            const user = await adapter.getUser({ email })
+            expect(user.login_attempts).toBe(initialLoginAttempts)
+          })
+      })
     })
 
     describe('When lockAfter is null', () => {
