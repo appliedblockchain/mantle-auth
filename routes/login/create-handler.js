@@ -55,7 +55,7 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
    *   - `user` is an Object with information about the user used to login
    * @func handler
    * @param {Object} ctx Koa ctx
-   * @returns {undefined}
+   * @returns {Promise<undefined>}
    * @throws {Error}
    */
   return async ctx => {
