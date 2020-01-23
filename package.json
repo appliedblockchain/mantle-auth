@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/mantle-auth",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "Authorization functionality for Koa routers",
   "scripts": {
     "lint": "eslint .",

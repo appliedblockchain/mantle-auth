@@ -50,7 +50,7 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
    * - it then checks whether login attempts is above the 'lockAfter' option
    *   - if not, then the 'locked' attribute is reset to 0 otherwise 'locked' is incremented by 1
    * - otherwise it creates a new jwt token
-   * - it then returns a response of the form `{ token }` or `{ token, user }`, depending upon the value of `returning` used to generate it
+   * - it then returns a response of the form `{ token }` or `{ token, user }`, depending upon the value of the async method `returning` used to generate it
    *   - `token` is the new jwt token
    *   - `user` is an Object with information about the user used to login
    * @func handler
@@ -107,9 +107,9 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
     const response = { token }
 
     if (returning) {
-      response.user = createPerson(userMap, returning)
+      response.user = await createPerson(userMap, returning)
     }
 
-    ctx.body = response
+    ctx.ok(response)
   }
 }
