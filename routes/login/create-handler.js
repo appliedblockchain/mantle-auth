@@ -23,7 +23,7 @@ module.exports = ({ jwt = {}, lockAfter = null, returning }) => {
 
   const defaultPayload = userMap => ({ email: userMap.email, id: userMap.id })
 
-  const createPerson = (personMap, selector) => {
+  const createPerson = async (personMap, selector) => {
     let result
 
     switch (true) {
